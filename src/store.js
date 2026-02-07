@@ -1,13 +1,18 @@
-import { type } from "@testing-library/user-event/dist/type";
-import { createStore } from "redux";
+import { combineReducers, createStore } from "redux";
 
-const initailState = {
+const initailStateAccount = {
   balance: 0,
   loan: 0,
   loanPurpose: "",
 };
 
-function reducer(state = initailState, action) {
+const initailStateCustomer = {
+  fullName: "",
+  customerID: "",
+  createdAt: "",
+};
+
+function accountReducer(state = initailStateAccount, action) {
   switch (action.type) {
     case "account/balance":
       return { ...state, balance: state.balance + action.payload };
@@ -30,11 +35,35 @@ function reducer(state = initailState, action) {
       };
 
     default:
-      break;
+      return state;
   }
 }
 
-const store = createStore(reducer);
+function customerReducer(state = initailStateCustomer, action) {
+  switch (action.type) {
+    case "customer/createCustomer":
+      return {
+        ...state,
+        fullName: action.payload.fullName,
+        customerID: action.payload.customerID,
+        createdAt: action.payload.createdAt,
+      };
+    case "customer/updateCustomer":
+      return {
+        ...state,
+        fullName: action.payload,
+      };
+
+    default:
+      return state;
+  }
+}
+
+const rootReducer = combineReducers({
+  account: accountReducer,
+  customer: customerReducer,
+});
+const store = createStore(rootReducer);
 
 // store.dispatch({ type: "account/balance", payload: 500 });
 // console.log(store.getState());
@@ -69,4 +98,18 @@ store.dispatch(balance(51000));
 store.dispatch(withdraw(500));
 store.dispatch(loan(500, "Buy car"));
 store.dispatch(loanPurpose());
+console.log(store.getState());
+
+function createCustomer(fullName, customerID) {
+  return {
+    type: "customer/createCustomer",
+    payload: { fullName, customerID, createdAt: new Date().toISOString() },
+  };
+}
+function updateCustomer(fullName) {
+  return { type: "customer/updateCustomer", payload: fullName };
+}
+
+store.dispatch(createCustomer("Abid", "3229"));
+store.dispatch(updateCustomer("Abid Ali"));
 console.log(store.getState());
