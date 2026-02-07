@@ -1,31 +1,31 @@
 // import store from "../../store";
 
 const initailStateAccount = {
-  balance: 0,
+  deposite: 0,
   loan: 0,
   loanPurpose: "",
 };
 
 export default function accountReducer(state = initailStateAccount, action) {
   switch (action.type) {
-    case "account/balance":
-      return { ...state, balance: state.balance + action.payload };
+    case "account/deposite":
+      return { ...state, deposite: state.deposite + action.payload };
     case "account/withdraw":
-      return { ...state, balance: state.balance - action.payload };
+      return { ...state, deposite: state.deposite - action.payload };
     case "account/requestloan":
       if (state.loan > 0) return state;
       return {
         ...state,
         loan: action.payload.amount,
         loanPurpose: action.payload.purpose,
-        balance: state.balance + action.payload.amount,
+        deposite: state.deposite + action.payload.amount,
       };
     case "account/payloan":
       return {
         ...state,
         loan: 0,
         loanPurpose: "",
-        balance: state.balance - state.loan,
+        deposite: state.deposite - state.loan,
       };
 
     default:
@@ -33,7 +33,7 @@ export default function accountReducer(state = initailStateAccount, action) {
   }
 }
 
-// store.dispatch({ type: "account/balance", payload: 500 });
+// store.dispatch({ type: "account/deposite", payload: 500 });
 // console.log(store.getState());
 // store.dispatch({ type: "account/withdraw", payload: 30 });
 // console.log(store.getState());
@@ -47,8 +47,8 @@ export default function accountReducer(state = initailStateAccount, action) {
 // });
 // console.log(store.getState());
 
-export function balance(amount) {
-  return { type: "account/balance", payload: amount };
+export function deposite(amount) {
+  return { type: "account/deposite", payload: amount };
 }
 export function withdraw(amount) {
   return { type: "account/withdraw", payload: amount };
@@ -56,13 +56,13 @@ export function withdraw(amount) {
 export function loan(amount, purpose) {
   return { type: "account/requestloan", payload: { amount, purpose } };
 }
-export function loanPurpose() {
+export function payloan() {
   return { type: "account/payloan" };
 }
-// function balance(amount) {
-//   return { type: "account/balance", payload: amount };
+// function deposite(amount) {
+//   return { type: "account/deposite", payload: amount };
 // }
-// store.dispatch(balance(51000));
+// store.dispatch(deposite(51000));
 // store.dispatch(withdraw(500));
 // store.dispatch(loan(500, "Buy car"));
 // store.dispatch(loanPurpose());
