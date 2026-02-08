@@ -1,7 +1,7 @@
 // import store from "../../store";
 
 const initailStateAccount = {
-  deposite: 0,
+  balance: 0,
   loan: 0,
   loanPurpose: "",
 };
@@ -9,23 +9,23 @@ const initailStateAccount = {
 export default function accountReducer(state = initailStateAccount, action) {
   switch (action.type) {
     case "account/deposite":
-      return { ...state, deposite: state.deposite + action.payload };
+      return { ...state, balance: state.balance + action.payload };
     case "account/withdraw":
-      return { ...state, deposite: state.deposite - action.payload };
+      return { ...state, balance: state.balance - action.payload };
     case "account/requestloan":
       if (state.loan > 0) return state;
       return {
         ...state,
         loan: action.payload.amount,
         loanPurpose: action.payload.purpose,
-        deposite: state.deposite + action.payload.amount,
+        balance: state.balance + action.payload.amount,
       };
     case "account/payloan":
       return {
         ...state,
         loan: 0,
         loanPurpose: "",
-        deposite: state.deposite - state.loan,
+        balance: state.balance - state.loan,
       };
 
     default:
