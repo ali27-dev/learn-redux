@@ -4,12 +4,17 @@ const initailStateAccount = {
   balance: 0,
   loan: 0,
   loanPurpose: "",
+  isLoading: false,
 };
 
 export default function accountReducer(state = initailStateAccount, action) {
   switch (action.type) {
     case "account/deposite":
-      return { ...state, balance: state.balance + action.payload };
+      return {
+        ...state,
+        balance: state.balance + action.payload,
+        isLoading: false,
+      };
     case "account/withdraw":
       return { ...state, balance: state.balance - action.payload };
     case "account/requestloan":
@@ -27,7 +32,8 @@ export default function accountReducer(state = initailStateAccount, action) {
         loanPurpose: "",
         balance: state.balance - state.loan,
       };
-
+    case "account/covertingCurrency":
+      return { ...state, isLoading: true };
     default:
       return state;
   }
@@ -47,8 +53,22 @@ export default function accountReducer(state = initailStateAccount, action) {
 // });
 // console.log(store.getState());
 
-export function deposite(amount) {
-  return { type: "account/deposite", payload: amount };
+export function deposite(amount, currency) {
+  if (currency === "USD") return { type: "account/deposite", payload: amount };
+
+  return async function (dispatch, getState) {
+    dispatch({ type: "account/covertingCurrency" });
+    // API Call
+    const res = await fetch(
+      `https://api.frankfurter.app/latest?amount=${amount}&from=${currency}&to=USD`
+    );
+    const data = await res.json();
+    // console.log(data);
+    const coverted = data.rates.USD;
+    console.log(coverted);
+    // return action
+    dispatch({ type: "account/deposite", payload: coverted });
+  };
 }
 export function withdraw(amount) {
   return { type: "account/withdraw", payload: amount };
